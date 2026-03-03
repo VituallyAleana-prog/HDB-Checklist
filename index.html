@@ -618,7 +618,7 @@
             <div class="step-card tile-card" data-step="2">
                 <div class="step-header">
                     <div class="step-num">2</div>
-                    <span class="step-title">Marketing & Viewings 📸</span>
+                    <span class="step-title">Marketing &amp; Viewings 📸</span>
                     <span class="step-progress">0/4</span>
                 </div>
                 <div class="checkbox-list">
@@ -632,7 +632,7 @@
                     </label>
                     <label class="checkbox-item">
                         <input type="checkbox" onchange="updateProgress()">
-                        <span>Arrange & host viewings</span>
+                        <span>Arrange &amp; host viewings</span>
                     </label>
                     <label class="checkbox-item">
                         <input type="checkbox" onchange="updateProgress()">
@@ -847,13 +847,14 @@
 
         function createConfetti() {
             const colors = ['#7C3AED', '#9B5CF6', '#A78BFA', '#C4B5FD', '#EDE9FE'];
+            const count  = colors.length;
             for (let i = 0; i < 50; i++) {
                 setTimeout(() => {
                     const el = document.createElement('div');
                     el.style.cssText =
                         'position:fixed;left:' + (Math.random() * 100) + 'vw;top:-10px;' +
                         'width:8px;height:8px;border-radius:50%;pointer-events:none;z-index:9999;' +
-                        'background:' + colors[Math.floor(Math.random() * colors.length)] + ';' +
+                        'background:' + colors[Math.floor(Math.random() * count)] + ';' +
                         'animation:fall 3s linear forwards;';
                     document.body.appendChild(el);
                     setTimeout(() => el.remove(), 3000);
