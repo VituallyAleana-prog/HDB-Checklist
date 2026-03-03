@@ -4,389 +4,865 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🏡 HDB Seller's Process Checklist</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-        body { font-family: 'Inter', sans-serif; }
-        
-        .step-card {
-            transition: all 0.3s ease;
-            border-left: 4px solid #e5e7eb;
+        /* ── CSS Variables ──────────────────────────────── */
+        :root {
+            --bg:            #07090F;
+            --bg-2:          #0D1017;
+            --surface:       #0F1219;
+            --surface-2:     #141820;
+
+            --text:          #EDF0F7;
+            --text-2:        #8892A8;
+            --muted:         #4A526A;
+
+            --accent:        #7C3AED;
+            --accent-2:      #9B5CF6;
+            --accent-glow:   #A78BFA;
+            --accent-soft:   rgba(124,58,237,0.12);
+            --accent-border: rgba(124,58,237,0.28);
+
+            --neon-line:     rgba(139,92,246,0.18);
+            --line:          rgba(255,255,255,0.06);
+            --line-2:        rgba(255,255,255,0.10);
+
+            --glow-sm:  0 0 0 1px rgba(124,58,237,0.25), 0 4px 20px rgba(124,58,237,0.15);
+            --glow-md:  0 0 0 1px rgba(124,58,237,0.35), 0 8px 40px rgba(124,58,237,0.22);
+            --glow-lg:  0 0 0 1px rgba(139,92,246,0.45), 0 16px 60px rgba(124,58,237,0.30);
         }
-        
-        .step-card.active {
-            border-left-color: #3b82f6;
-            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+
+        body.light-mode {
+            --bg:        #F3F4F8;
+            --bg-2:      #FAFBFC;
+            --surface:   #FFFFFF;
+            --surface-2: #F0F2F8;
+            --text:      #0E1320;
+            --text-2:    #3D4A63;
+            --muted:     #6B7489;
+            --line:      rgba(0,0,0,0.08);
+            --neon-line: rgba(124,58,237,0.10);
+            --glow-sm:   0 2px 12px rgba(0,0,0,0.07);
+            --glow-md:   0 4px 20px rgba(0,0,0,0.10);
         }
-        
-        .step-card.completed {
-            border-left-color: #10b981;
-            background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+
+        /* ── Reset ──────────────────────────────────────── */
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            background-image:
+                radial-gradient(ellipse 80% 50% at 50% -10%, rgba(124,58,237,0.14) 0%, transparent 60%),
+                linear-gradient(rgba(139,92,246,0.04) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(139,92,246,0.04) 1px, transparent 1px);
+            background-size: 100% 100%, 48px 48px, 48px 48px;
+            transition: background-color 0.3s, color 0.3s;
         }
-        
-        .checkbox-item {
-            transition: all 0.2s ease;
+
+        .hidden { display: none !important; }
+
+        /* ── NAV ────────────────────────────────────────── */
+        .nav {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 50;
+            background: rgba(7,9,15,0.85);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--neon-line);
+            padding: 14px 24px;
         }
-        
-        .checkbox-item:hover {
-            background-color: rgba(59, 130, 246, 0.05);
+
+        body.light-mode .nav {
+            background: rgba(243,244,248,0.90);
         }
-        
-        .checkbox-item.completed {
-            background-color: rgba(16, 185, 129, 0.1);
+
+        .nav-inner {
+            max-width: 800px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            gap: 16px;
         }
-        
-        .progress-bar {
+
+        .nav-logo {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            font-size: 16px;
+            color: var(--accent-glow);
+            text-shadow: 0 0 16px rgba(167,139,250,0.4);
+            text-decoration: none;
+            white-space: nowrap;
+        }
+
+        .nav-progress-wrap {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .nav-progress-label {
+            font-size: 11px;
+            color: var(--muted);
+            text-align: right;
+        }
+
+        .nav-progress-track {
+            width: 100%;
+            height: 4px;
+            background: var(--surface-2);
+            border-radius: 99px;
+            overflow: hidden;
+        }
+
+        .nav-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent), var(--accent-2));
+            border-radius: 99px;
+            width: 0%;
             transition: width 0.5s ease;
         }
-        
-        .floating-progress {
-            backdrop-filter: blur(10px);
-            background: rgba(255, 255, 255, 0.9);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+
+        /* ── Theme Toggle ───────────────────────────────── */
+        .theme-toggle {
+            background: var(--surface-2);
+            border: 1px solid var(--neon-line);
+            border-radius: 99px;
+            padding: 3px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 2px;
+            transition: border-color 0.2s;
+            flex-shrink: 0;
+        }
+
+        .theme-toggle:hover { border-color: var(--accent-border); }
+
+        .toggle-knob {
+            width: 28px;
+            height: 28px;
+            border-radius: 99px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            background: transparent;
+            transition: background 0.2s;
+        }
+
+        .toggle-knob.active { background: var(--accent); }
+
+        /* ── Tile Card (core component) ─────────────────── */
+        .tile-card {
+            background: var(--surface);
+            border: 1px solid var(--neon-line);
+            border-radius: 18px;
+            padding: 28px;
+            position: relative;
+            overflow: hidden;
+            transition: border-color 0.25s, box-shadow 0.25s, transform 0.2s;
+        }
+
+        .tile-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(139,92,246,0.6), transparent);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .tile-card:hover {
+            border-color: rgba(124,58,237,0.45);
+            box-shadow: var(--glow-md);
+            transform: translateY(-3px);
+        }
+
+        .tile-card:hover::before { opacity: 1; }
+
+        /* ── Hero ───────────────────────────────────────── */
+        .hero {
+            padding: 110px 24px 48px;
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(124,58,237,0.08);
+            border: 1px solid var(--accent-border);
+            border-radius: 99px;
+            padding: 6px 16px;
+            margin-bottom: 24px;
+            font-size: 11px;
+            color: var(--accent-glow);
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .dot {
+            width: 6px;
+            height: 6px;
+            background: var(--accent-2);
+            border-radius: 50%;
+            flex-shrink: 0;
+            animation: pulse-dot 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50%       { opacity: 0.5; transform: scale(1.4); }
+        }
+
+        .hero h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 800;
+            font-size: clamp(28px, 4.5vw, 52px);
+            letter-spacing: -0.03em;
+            line-height: 1.1;
+            margin-bottom: 16px;
+            color: var(--text);
+        }
+
+        .hero h1 .accent {
+            color: var(--accent-glow);
+            text-shadow: 0 0 30px rgba(124,58,237,0.4);
+        }
+
+        .hero p {
+            font-size: 15px;
+            line-height: 1.8;
+            color: var(--text-2);
+            max-width: 560px;
+            margin: 0 auto 32px;
+        }
+
+        .hero-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            padding: 14px 32px;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            box-shadow: 0 4px 24px rgba(124,58,237,0.4);
+            transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn-primary:hover {
+            background: var(--accent-2);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 32px rgba(124,58,237,0.5);
+        }
+
+        .btn-ghost {
+            background: transparent;
+            color: var(--accent-glow);
+            border: 1px solid var(--accent-border);
+            border-radius: 12px;
+            padding: 14px 32px;
+            font-family: 'Inter', sans-serif;
+            font-weight: 500;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.2s;
+        }
+
+        .btn-ghost:hover {
+            background: var(--accent-soft);
+            transform: translateY(-2px);
+        }
+
+        /* ── Stats Row ──────────────────────────────────── */
+        .stats-row {
+            max-width: 800px;
+            margin: 0 auto 40px;
+            padding: 0 24px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 14px;
+        }
+
+        .stat-card {
+            text-align: center;
+            padding: 20px 16px;
+        }
+
+        .stat-num {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            font-size: 28px;
+            color: var(--accent-glow);
+            line-height: 1;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: var(--muted);
+            margin-top: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.10em;
+        }
+
+        /* ── Steps Section ──────────────────────────────── */
+        .steps-section {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 24px 60px;
+        }
+
+        .section-kicker {
+            display: inline-flex;
+            background: var(--accent-soft);
+            border: 1px solid var(--accent-border);
+            border-radius: 99px;
+            padding: 4px 14px;
+            color: var(--accent-glow);
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            margin-bottom: 16px;
+        }
+
+        .section-heading {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 800;
+            font-size: clamp(20px, 3vw, 30px);
+            letter-spacing: -0.02em;
+            color: var(--text);
+            margin-bottom: 24px;
+        }
+
+        /* ── Step Cards ─────────────────────────────────── */
+        .step-card {
+            margin-bottom: 14px;
+        }
+
+        .step-card.active {
+            border-color: rgba(124,58,237,0.45);
+            box-shadow: var(--glow-sm);
+        }
+
+        .step-card.completed {
+            border-color: rgba(139,92,246,0.35);
+            box-shadow: var(--glow-sm);
+        }
+
+        .step-card.completed::before { opacity: 1; }
+
+        .step-header {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 20px;
+        }
+
+        .step-num {
+            width: 36px;
+            height: 36px;
+            background: var(--accent-soft);
+            border: 1px solid var(--accent-border);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            font-size: 14px;
+            color: var(--accent-glow);
+            flex-shrink: 0;
+            transition: background 0.25s, border-color 0.25s, color 0.25s;
+        }
+
+        .step-card.completed .step-num {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: #fff;
+        }
+
+        .step-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            font-size: 16px;
+            color: var(--text);
+        }
+
+        .step-progress {
+            margin-left: auto;
+            font-size: 11px;
+            color: var(--muted);
+            background: var(--surface-2);
+            border: 1px solid var(--line);
+            border-radius: 99px;
+            padding: 3px 10px;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        /* ── Checkbox Items ─────────────────────────────── */
+        .checkbox-list {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 14px;
+            border-radius: 10px;
+            cursor: pointer;
+            border: 1px solid transparent;
+            transition: background 0.2s, border-color 0.2s;
+        }
+
+        .checkbox-item:hover {
+            background: var(--accent-soft);
+            border-color: var(--accent-border);
+        }
+
+        .checkbox-item.completed {
+            background: rgba(124,58,237,0.06);
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            flex-shrink: 0;
+            accent-color: var(--accent);
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        .checkbox-item span {
+            font-size: 14px;
+            color: var(--text-2);
+            line-height: 1.5;
+            transition: color 0.2s, opacity 0.2s;
+        }
+
+        .checkbox-item.completed span {
+            color: var(--muted);
+            text-decoration: line-through;
+            opacity: 0.7;
+        }
+
+        /* ── Completion ─────────────────────────────────── */
+        .completion-section {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 24px 80px;
+        }
+
+        .completion-card {
+            text-align: center;
+            padding: 48px 32px;
+        }
+
+        .completion-card .confetti-emoji {
+            font-size: 56px;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .completion-card h2 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 800;
+            font-size: clamp(24px, 4vw, 40px);
+            color: var(--text);
+            margin-bottom: 12px;
+            letter-spacing: -0.02em;
+        }
+
+        .completion-card p {
+            font-size: 15px;
+            color: var(--text-2);
+            line-height: 1.7;
+        }
+
+        /* ── Footer ─────────────────────────────────────── */
+        .footer {
+            background: var(--bg);
+            border-top: 1px solid var(--neon-line);
+            padding: 32px 24px;
+            text-align: center;
+        }
+
+        .footer-brand {
+            font-family: 'Space Grotesk', sans-serif;
+            font-style: italic;
+            font-weight: 700;
+            font-size: 16px;
+            color: var(--accent-glow);
+            margin-bottom: 8px;
+        }
+
+        .footer-note {
+            font-size: 12px;
+            color: var(--muted);
+            line-height: 1.6;
+        }
+
+        /* ── Animations ─────────────────────────────────── */
+        @keyframes fall {
+            to { transform: translateY(100vh) rotate(360deg); }
         }
     </style>
 </head>
-<body class="bg-gradient-to-br from-blue-50 via-white to-green-50 min-h-screen">
-    <!-- Floating Progress Bar -->
-    <div class="fixed top-0 left-0 right-0 z-50 floating-progress border-b border-gray-200">
-        <div class="max-w-4xl mx-auto px-6 py-4">
-            <div class="flex items-center justify-between mb-2">
-                <h1 class="text-lg font-semibold text-gray-800">🏡 HDB Seller's Checklist</h1>
-                <span class="text-sm font-medium text-gray-600" id="progressText">0% Complete</span>
+<body>
+
+    <!-- NAV -->
+    <nav class="nav">
+        <div class="nav-inner">
+            <a href="#" class="nav-logo">🏡 HDB Checklist</a>
+            <div class="nav-progress-wrap">
+                <div class="nav-progress-label" id="progressText">0% Complete</div>
+                <div class="nav-progress-track">
+                    <div class="nav-progress-fill" id="progressBar"></div>
+                </div>
             </div>
-            <div class="w-full bg-gray-200 rounded-full h-2">
-                <div class="progress-bar bg-gradient-to-r from-blue-500 to-green-500 h-2 rounded-full" id="progressBar" style="width: 0%"></div>
-            </div>
+            <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+                <span class="toggle-knob active" id="darkKnob">🌙</span>
+                <span class="toggle-knob" id="lightKnob">☀️</span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- HERO -->
+    <section class="hero">
+        <div class="status-pill">
+            <span class="dot"></span>
+            Step-by-Step Guide
+        </div>
+        <h1>HDB Seller's <span class="accent">Process Checklist</span></h1>
+        <p>Your complete guide to selling your HDB flat. Check off each task as you complete it — from pre-sale prep all the way to keys handover.</p>
+        <div class="hero-actions">
+            <button class="btn-primary" onclick="document.getElementById('stepsContainer').scrollIntoView({behavior:'smooth'})">Start Checklist ↓</button>
+            <button class="btn-ghost" onclick="resetChecklist()">🔄 Reset Progress</button>
+        </div>
+    </section>
+
+    <!-- STATS ROW -->
+    <div class="stats-row">
+        <div class="stat-card tile-card">
+            <div class="stat-num" id="statTotal">22</div>
+            <div class="stat-label">Total Tasks</div>
+        </div>
+        <div class="stat-card tile-card">
+            <div class="stat-num" id="statDone">0</div>
+            <div class="stat-label">Completed</div>
+        </div>
+        <div class="stat-card tile-card">
+            <div class="stat-num" id="statPct">0%</div>
+            <div class="stat-label">Progress</div>
         </div>
     </div>
 
-    <div class="pt-24 pb-12 px-6">
-        <div class="max-w-4xl mx-auto">
-            <!-- Header -->
-            <div class="text-center mb-12">
-                <h1 class="text-4xl font-bold text-gray-800 mb-4">🏡 Seller's Process Checklist</h1>
-                <p class="text-lg text-gray-600 max-w-2xl mx-auto">Your complete step-by-step guide to selling your HDB flat. Check off each task as you complete it!</p>
-            </div>
+    <!-- STEPS -->
+    <section class="steps-section">
+        <span class="section-kicker">Your Journey</span>
+        <h2 class="section-heading">6 Stages to a Successful Sale</h2>
 
-            <!-- Reset Button -->
-            <div class="text-center mb-8">
-                <button onclick="resetChecklist()" class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded-lg font-medium transition-colors">
-                    🔄 Reset Checklist
-                </button>
-            </div>
+        <div id="stepsContainer">
 
-            <!-- Steps Container -->
-            <div class="space-y-6" id="stepsContainer">
-                <!-- Step 1: Pre-Sale Prep -->
-                <div class="step-card bg-white rounded-xl p-6 shadow-lg" data-step="1">
-                    <div class="flex items-center mb-4">
-                        <div class="w-10 h-10 bg-blue-500 text-white rounded-full flex items-center justify-center font-bold mr-4">1</div>
-                        <h2 class="text-2xl font-bold text-gray-800">Pre-Sale Prep ✨</h2>
-                        <div class="ml-auto">
-                            <span class="step-progress text-sm font-medium text-gray-500">0/4</span>
-                        </div>
-                    </div>
-                    <div class="space-y-3 ml-14">
-                        <label class="checkbox-item flex items-center p-3 rounded-lg cursor-pointer">
-                            <input type="checkbox" class="w-5 h-5 text-blue-500 rounded mr-3" onchange="updateProgress()">
-                            <span class="text-gray-700">Check MOP (Minimum Occupation Period)</span>
-                        </label>
-                        <label class="checkbox-item flex items-center p-3 rounded-lg cursor-pointer">
-                            <input type="checkbox" class="w-5 h-5 text-blue-500 rounded mr-3" onchange="updateProgress()">
-                            <span class="text-gray-700">Prepare IC, HDB, CPF docs</span>
-                        </label>
-                        <label class="checkbox-item flex items-center p-3 rounded-lg cursor-pointer">
-                            <input type="checkbox" class="w-5 h-5 text-blue-500 rounded mr-3" onchange="updateProgress()">
-                            <span class="text-gray-700">Do light cleaning / touch-ups</span>
-                        </label>
-                        <label class="checkbox-item flex items-center p-3 rounded-lg cursor-pointer">
-                            <input type="checkbox" class="w-5 h-5 text-blue-500 rounded mr-3" onchange="updateProgress()">
-                            <span class="text-gray-700">Research market prices and set realistic expectations</span>
-                        </label>
-                    </div>
+            <!-- Step 1: Pre-Sale Prep -->
+            <div class="step-card tile-card" data-step="1">
+                <div class="step-header">
+                    <div class="step-num">1</div>
+                    <span class="step-title">Pre-Sale Prep ✨</span>
+                    <span class="step-progress">0/4</span>
                 </div>
-
-                <!-- Step 2: Marketing & Viewings -->
-                <div class="step-card bg-white rounded-xl p-6 shadow-lg" data-step="2">
-                    <div class="flex items-center mb-4">
-                        <div class="w-10 h-10 bg-blue-500 text-white rounded-full flex items-center justify-center font-bold mr-4">2</div>
-                        <h2 class="text-2xl font-bold text-gray-800">Marketing & Viewings 📸</h2>
-                        <div class="ml-auto">
-                            <span class="step-progress text-sm font-medium text-gray-500">0/4</span>
-                        </div>
-                    </div>
-                    <div class="space-y-3 ml-14">
-                        <label class="checkbox-item flex items-center p-3 rounded-lg cursor-pointer">
-                            <input type="checkbox" class="w-5 h-5 text-blue-500 rounded mr-3" onchange="updateProgress()">
-                            <span class="text-gray-700">Professional photoshoot / video tour</span>
-                        </label>
-                        <label class="checkbox-item flex items-center p-3 rounded-lg cursor-pointer">
-                            <input type="checkbox" class="w-5 h-5 text-blue-500 rounded mr-3" onchange="updateProgress()">
-                            <span class="text-gray-700">Advertise on portals (PropertyGuru, 99.co, etc.)</span>
-                        </label>
-                        <label class="checkbox-item flex items-center p-3 rounded-lg cursor-pointer">
-                            <input type="checkbox" class="w-5 h-5 text-blue-500 rounded mr-3" onchange="updateProgress()">
-                            <span class="text-gray-700">Arrange & host viewings</span>
-                        </label>
-                        <label class="checkbox-item flex items-center p-3 rounded-lg cursor-pointer">
-                            <input type="checkbox" class="w-5 h-5 text-blue-500 rounded mr-3" onchange="updateProgress()">
-                            <span class="text-gray-700">Collect buyer feedback</span>
-                        </label>
-                    </div>
-                </div>
-
-                <!-- Step 3: Option to Purchase -->
-                <div class="step-card bg-white rounded-xl p-6 shadow-lg" data-step="3">
-                    <div class="flex items-center mb-4">
-                        <div class="w-10 h-10 bg-blue-500 text-white rounded-full flex items-center justify-center font-bold mr-4">3</div>
-                        <h2 class="text-2xl font-bold text-gray-800">Option to Purchase (OTP) 📝</h2>
-                        <div class="ml-auto">
-                            <span class="step-progress text-sm font-medium text-gray-500">0/4</span>
-                        </div>
-                    </div>
-                    <div class="space-y-3 ml-14">
-                        <label class="checkbox-item flex items-center p-3 rounded-lg cursor-pointer">
-                            <input type="checkbox" class="w-5 h-5 text-blue-500 rounded mr-3" onchange="updateProgress()">
-                            <span class="text-gray-700">Issue HDB OTP to chosen buyer</span>
-                        </label>
-                        <label class="checkbox-item flex items-center p-3 rounded-lg cursor-pointer">
-                            <input type="checkbox" class="w-5 h-5 text-blue-500 rounded mr-3" onchange="updateProgress()">
-                            <span class="text-gray-700">Collect Option Fee ($1–$1,000)</span>
-                        </label>
-                        <label class="checkbox-item flex items-center p-3 rounded-lg cursor-pointer">
-                            <input type="checkbox" class="w-5 h-5 text-blue-500 rounded mr-3" onchange="updateProgress()">
-                            <span class="text-gray-700">Buyer has 21 days to exercise OTP</span>
-                        </label>
-                        <label class="checkbox-item flex items-center p-3 rounded-lg cursor-pointer">
-                            <input type="checkbox" class="w-5 h-5 text-blue-500 rounded mr-3" onchange="updateProgress()">
-                            <span class="text-gray-700">Submit OTP to HDB portal</span>
-                        </label>
-                    </div>
-                </div>
-
-                <!-- Step 4: Resale Application -->
-                <div class="step-card bg-white rounded-xl p-6 shadow-lg" data-step="4">
-                    <div class="flex items-center mb-4">
-                        <div class="w-10 h-10 bg-blue-500 text-white rounded-full flex items-center justify-center font-bold mr-4">4</div>
-                        <h2 class="text-2xl font-bold text-gray-800">Resale Application 🖥️</h2>
-                        <div class="ml-auto">
-                            <span class="step-progress text-sm font-medium text-gray-500">0/3</span>
-                        </div>
-                    </div>
-                    <div class="space-y-3 ml-14">
-                        <label class="checkbox-item flex items-center p-3 rounded-lg cursor-pointer">
-                            <input type="checkbox" class="w-5 h-5 text-blue-500 rounded mr-3" onchange="updateProgress()">
-                            <span class="text-gray-700">Submit resale application (buyer & seller)</span>
-                        </label>
-                        <label class="checkbox-item flex items-center p-3 rounded-lg cursor-pointer">
-                            <input type="checkbox" class="w-5 h-5 text-blue-500 rounded mr-3" onchange="updateProgress()">
-                            <span class="text-gray-700">Acknowledge each other within 7 days</span>
-                        </label>
-                        <label class="checkbox-item flex items-center p-3 rounded-lg cursor-pointer">
-                            <input type="checkbox" class="w-5 h-5 text-blue-500 rounded mr-3" onchange="updateProgress()">
-                            <span class="text-gray-700">Track status on HDB portal</span>
-                        </label>
-                    </div>
-                </div>
-
-                <!-- Step 5: HDB Appointments -->
-                <div class="step-card bg-white rounded-xl p-6 shadow-lg" data-step="5">
-                    <div class="flex items-center mb-4">
-                        <div class="w-10 h-10 bg-blue-500 text-white rounded-full flex items-center justify-center font-bold mr-4">5</div>
-                        <h2 class="text-2xl font-bold text-gray-800">HDB Appointments 📅</h2>
-                        <div class="ml-auto">
-                            <span class="step-progress text-sm font-medium text-gray-500">0/3</span>
-                        </div>
-                    </div>
-                    <div class="space-y-3 ml-14">
-                        <label class="checkbox-item flex items-center p-3 rounded-lg cursor-pointer">
-                            <input type="checkbox" class="w-5 h-5 text-blue-500 rounded mr-3" onchange="updateProgress()">
-                            <span class="text-gray-700">HDB reviews (around 8 weeks)</span>
-                        </label>
-                        <label class="checkbox-item flex items-center p-3 rounded-lg cursor-pointer">
-                            <input type="checkbox" class="w-5 h-5 text-blue-500 rounded mr-3" onchange="updateProgress()">
-                            <span class="text-gray-700">1st appointment: verify documents</span>
-                        </label>
-                        <label class="checkbox-item flex items-center p-3 rounded-lg cursor-pointer">
-                            <input type="checkbox" class="w-5 h-5 text-blue-500 rounded mr-3" onchange="updateProgress()">
-                            <span class="text-gray-700">2nd appointment: signing & payments</span>
-                        </label>
-                    </div>
-                </div>
-
-                <!-- Step 6: Completion & Handover -->
-                <div class="step-card bg-white rounded-xl p-6 shadow-lg" data-step="6">
-                    <div class="flex items-center mb-4">
-                        <div class="w-10 h-10 bg-blue-500 text-white rounded-full flex items-center justify-center font-bold mr-4">6</div>
-                        <h2 class="text-2xl font-bold text-gray-800">Completion & Handover 🔑</h2>
-                        <div class="ml-auto">
-                            <span class="step-progress text-sm font-medium text-gray-500">0/4</span>
-                        </div>
-                    </div>
-                    <div class="space-y-3 ml-14">
-                        <label class="checkbox-item flex items-center p-3 rounded-lg cursor-pointer">
-                            <input type="checkbox" class="w-5 h-5 text-blue-500 rounded mr-3" onchange="updateProgress()">
-                            <span class="text-gray-700">Clear utilities & town council bills</span>
-                        </label>
-                        <label class="checkbox-item flex items-center p-3 rounded-lg cursor-pointer">
-                            <input type="checkbox" class="w-5 h-5 text-blue-500 rounded mr-3" onchange="updateProgress()">
-                            <span class="text-gray-700">Vacate flat (unless Extension of Stay agreed)</span>
-                        </label>
-                        <label class="checkbox-item flex items-center p-3 rounded-lg cursor-pointer">
-                            <input type="checkbox" class="w-5 h-5 text-blue-500 rounded mr-3" onchange="updateProgress()">
-                            <span class="text-gray-700">Handover keys at completion</span>
-                        </label>
-                        <label class="checkbox-item flex items-center p-3 rounded-lg cursor-pointer">
-                            <input type="checkbox" class="w-5 h-5 text-blue-500 rounded mr-3" onchange="updateProgress()">
-                            <span class="text-gray-700">Receive sale proceeds (CPF / bank credit)</span>
-                        </label>
-                    </div>
+                <div class="checkbox-list">
+                    <label class="checkbox-item">
+                        <input type="checkbox" onchange="updateProgress()">
+                        <span>Check MOP (Minimum Occupation Period)</span>
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" onchange="updateProgress()">
+                        <span>Prepare IC, HDB, CPF docs</span>
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" onchange="updateProgress()">
+                        <span>Do light cleaning / touch-ups</span>
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" onchange="updateProgress()">
+                        <span>Research market prices and set realistic expectations</span>
+                    </label>
                 </div>
             </div>
 
-            <!-- Completion Celebration -->
-            <div id="completionMessage" class="hidden mt-12 text-center">
-                <div class="bg-gradient-to-r from-green-400 to-blue-500 text-white p-8 rounded-2xl shadow-xl">
-                    <div class="text-6xl mb-4">🎉</div>
-                    <h2 class="text-3xl font-bold mb-2">Congratulations!</h2>
-                    <p class="text-xl">You've successfully completed your HDB selling process!</p>
+            <!-- Step 2: Marketing & Viewings -->
+            <div class="step-card tile-card" data-step="2">
+                <div class="step-header">
+                    <div class="step-num">2</div>
+                    <span class="step-title">Marketing &amp; Viewings 📸</span>
+                    <span class="step-progress">0/4</span>
                 </div>
+                <div class="checkbox-list">
+                    <label class="checkbox-item">
+                        <input type="checkbox" onchange="updateProgress()">
+                        <span>Professional photoshoot / video tour</span>
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" onchange="updateProgress()">
+                        <span>Advertise on portals (PropertyGuru, 99.co, etc.)</span>
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" onchange="updateProgress()">
+                        <span>Arrange &amp; host viewings</span>
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" onchange="updateProgress()">
+                        <span>Collect buyer feedback</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Step 3: Option to Purchase -->
+            <div class="step-card tile-card" data-step="3">
+                <div class="step-header">
+                    <div class="step-num">3</div>
+                    <span class="step-title">Option to Purchase (OTP) 📝</span>
+                    <span class="step-progress">0/4</span>
+                </div>
+                <div class="checkbox-list">
+                    <label class="checkbox-item">
+                        <input type="checkbox" onchange="updateProgress()">
+                        <span>Issue HDB OTP to chosen buyer</span>
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" onchange="updateProgress()">
+                        <span>Collect Option Fee ($1–$1,000)</span>
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" onchange="updateProgress()">
+                        <span>Buyer has 21 days to exercise OTP</span>
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" onchange="updateProgress()">
+                        <span>Submit OTP to HDB portal</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Step 4: Resale Application -->
+            <div class="step-card tile-card" data-step="4">
+                <div class="step-header">
+                    <div class="step-num">4</div>
+                    <span class="step-title">Resale Application 🖥️</span>
+                    <span class="step-progress">0/3</span>
+                </div>
+                <div class="checkbox-list">
+                    <label class="checkbox-item">
+                        <input type="checkbox" onchange="updateProgress()">
+                        <span>Submit resale application (buyer &amp; seller)</span>
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" onchange="updateProgress()">
+                        <span>Acknowledge each other within 7 days</span>
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" onchange="updateProgress()">
+                        <span>Track status on HDB portal</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Step 5: HDB Appointments -->
+            <div class="step-card tile-card" data-step="5">
+                <div class="step-header">
+                    <div class="step-num">5</div>
+                    <span class="step-title">HDB Appointments 📅</span>
+                    <span class="step-progress">0/3</span>
+                </div>
+                <div class="checkbox-list">
+                    <label class="checkbox-item">
+                        <input type="checkbox" onchange="updateProgress()">
+                        <span>HDB reviews (around 8 weeks)</span>
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" onchange="updateProgress()">
+                        <span>1st appointment: verify documents</span>
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" onchange="updateProgress()">
+                        <span>2nd appointment: signing &amp; payments</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Step 6: Completion & Handover -->
+            <div class="step-card tile-card" data-step="6">
+                <div class="step-header">
+                    <div class="step-num">6</div>
+                    <span class="step-title">Completion &amp; Handover 🔑</span>
+                    <span class="step-progress">0/4</span>
+                </div>
+                <div class="checkbox-list">
+                    <label class="checkbox-item">
+                        <input type="checkbox" onchange="updateProgress()">
+                        <span>Clear utilities &amp; town council bills</span>
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" onchange="updateProgress()">
+                        <span>Vacate flat (unless Extension of Stay agreed)</span>
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" onchange="updateProgress()">
+                        <span>Handover keys at completion</span>
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" onchange="updateProgress()">
+                        <span>Receive sale proceeds (CPF / bank credit)</span>
+                    </label>
+                </div>
+            </div>
+
+        </div><!-- /stepsContainer -->
+    </section>
+
+    <!-- COMPLETION MESSAGE -->
+    <section class="completion-section">
+        <div id="completionMessage" class="hidden">
+            <div class="completion-card tile-card">
+                <span class="confetti-emoji">🎉</span>
+                <h2>Congratulations!</h2>
+                <p>You've successfully completed your HDB selling process!<br>All steps are done — enjoy your sale proceeds!</p>
             </div>
         </div>
-    </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="footer-brand">🏡 HDB Checklist</div>
+        <div class="footer-note">A simple tool to guide you through the HDB resale process.<br>Not financial or legal advice.</div>
+    </footer>
 
     <script>
-        // Load saved progress from localStorage
+        /* ── Theme toggle ───────────────────────────── */
+        function toggleTheme() {
+            document.body.classList.toggle('light-mode');
+            const isLight = document.body.classList.contains('light-mode');
+            document.getElementById('darkKnob').classList.toggle('active', !isLight);
+            document.getElementById('lightKnob').classList.toggle('active', isLight);
+            localStorage.setItem('hdbTheme', isLight ? 'light' : 'dark');
+        }
+
+        (function initTheme() {
+            if (localStorage.getItem('hdbTheme') === 'light') {
+                document.body.classList.add('light-mode');
+                document.getElementById('darkKnob').classList.remove('active');
+                document.getElementById('lightKnob').classList.add('active');
+            }
+        })();
+
+        /* ── Progress helpers ───────────────────────── */
         function loadProgress() {
             const saved = localStorage.getItem('hdbSellerChecklist');
             if (saved) {
-                const checkboxes = JSON.parse(saved);
-                const allCheckboxes = document.querySelectorAll('input[type="checkbox"]');
-                allCheckboxes.forEach((checkbox, index) => {
-                    if (checkboxes[index]) {
-                        checkbox.checked = true;
-                    }
+                const states = JSON.parse(saved);
+                document.querySelectorAll('input[type="checkbox"]').forEach((cb, i) => {
+                    if (states[i]) cb.checked = true;
                 });
                 updateProgress();
             }
         }
 
-        // Save progress to localStorage
         function saveProgress() {
-            const checkboxes = document.querySelectorAll('input[type="checkbox"]');
-            const states = Array.from(checkboxes).map(cb => cb.checked);
+            const states = Array.from(document.querySelectorAll('input[type="checkbox"]')).map(cb => cb.checked);
             localStorage.setItem('hdbSellerChecklist', JSON.stringify(states));
         }
 
         function updateProgress() {
-            const allCheckboxes = document.querySelectorAll('input[type="checkbox"]');
-            const checkedBoxes = document.querySelectorAll('input[type="checkbox"]:checked');
-            const totalTasks = allCheckboxes.length;
-            const completedTasks = checkedBoxes.length;
-            const percentage = Math.round((completedTasks / totalTasks) * 100);
+            const allCbs     = document.querySelectorAll('input[type="checkbox"]');
+            const checkedCbs = document.querySelectorAll('input[type="checkbox"]:checked');
+            const total      = allCbs.length;
+            const done       = checkedCbs.length;
+            const pct        = Math.round((done / total) * 100);
 
-            // Update progress bar
-            document.getElementById('progressBar').style.width = percentage + '%';
-            document.getElementById('progressText').textContent = percentage + '% Complete (' + completedTasks + '/' + totalTasks + ')';
+            // Nav progress bar
+            document.getElementById('progressBar').style.width = pct + '%';
+            document.getElementById('progressText').textContent = pct + '% Complete (' + done + '/' + total + ')';
 
-            // Update step progress and styling
-            const steps = document.querySelectorAll('.step-card');
-            steps.forEach((step, stepIndex) => {
-                const stepCheckboxes = step.querySelectorAll('input[type="checkbox"]');
+            // Stats row
+            document.getElementById('statTotal').textContent = total;
+            document.getElementById('statDone').textContent  = done;
+            document.getElementById('statPct').textContent   = pct + '%';
+
+            // Per-step cards
+            document.querySelectorAll('.step-card').forEach(step => {
+                const stepCbs     = step.querySelectorAll('input[type="checkbox"]');
                 const stepChecked = step.querySelectorAll('input[type="checkbox"]:checked');
-                const stepProgress = step.querySelector('.step-progress');
-                
-                stepProgress.textContent = stepChecked.length + '/' + stepCheckboxes.length;
-                
-                // Update step styling
+                step.querySelector('.step-progress').textContent = stepChecked.length + '/' + stepCbs.length;
+
                 step.classList.remove('active', 'completed');
-                if (stepChecked.length === stepCheckboxes.length && stepCheckboxes.length > 0) {
+                if (stepChecked.length === stepCbs.length && stepCbs.length > 0) {
                     step.classList.add('completed');
                 } else if (stepChecked.length > 0) {
                     step.classList.add('active');
                 }
 
-                // Update individual checkbox items
-                stepCheckboxes.forEach(checkbox => {
-                    const item = checkbox.closest('.checkbox-item');
-                    if (checkbox.checked) {
-                        item.classList.add('completed');
-                        checkbox.nextElementSibling.style.textDecoration = 'line-through';
-                        checkbox.nextElementSibling.style.opacity = '0.7';
-                    } else {
-                        item.classList.remove('completed');
-                        checkbox.nextElementSibling.style.textDecoration = 'none';
-                        checkbox.nextElementSibling.style.opacity = '1';
-                    }
+                stepCbs.forEach(cb => {
+                    cb.closest('.checkbox-item').classList.toggle('completed', cb.checked);
                 });
             });
 
-            // Show completion message
-            const completionMessage = document.getElementById('completionMessage');
-            if (percentage === 100) {
-                completionMessage.classList.remove('hidden');
-                // Add confetti effect
-                createConfetti();
-            } else {
-                completionMessage.classList.add('hidden');
-            }
+            // Completion banner
+            document.getElementById('completionMessage').classList.toggle('hidden', pct !== 100);
+            if (pct === 100) createConfetti();
 
-            // Save progress
             saveProgress();
         }
 
         function resetChecklist() {
             if (confirm('Are you sure you want to reset all progress? This cannot be undone.')) {
-                const checkboxes = document.querySelectorAll('input[type="checkbox"]');
-                checkboxes.forEach(checkbox => {
-                    checkbox.checked = false;
-                });
+                document.querySelectorAll('input[type="checkbox"]').forEach(cb => { cb.checked = false; });
                 localStorage.removeItem('hdbSellerChecklist');
                 updateProgress();
             }
         }
 
         function createConfetti() {
-            // Simple confetti effect
-            const colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#ffeaa7'];
+            const colors = ['#7C3AED', '#9B5CF6', '#A78BFA', '#C4B5FD', '#EDE9FE'];
+            const count  = colors.length;
             for (let i = 0; i < 50; i++) {
                 setTimeout(() => {
-                    const confetti = document.createElement('div');
-                    confetti.style.position = 'fixed';
-                    confetti.style.left = Math.random() * 100 + 'vw';
-                    confetti.style.top = '-10px';
-                    confetti.style.width = '10px';
-                    confetti.style.height = '10px';
-                    confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-                    confetti.style.borderRadius = '50%';
-                    confetti.style.pointerEvents = 'none';
-                    confetti.style.zIndex = '9999';
-                    confetti.style.animation = 'fall 3s linear forwards';
-                    document.body.appendChild(confetti);
-
-                    setTimeout(() => {
-                        confetti.remove();
-                    }, 3000);
+                    const el = document.createElement('div');
+                    el.style.cssText =
+                        'position:fixed;left:' + (Math.random() * 100) + 'vw;top:-10px;' +
+                        'width:8px;height:8px;border-radius:50%;pointer-events:none;z-index:9999;' +
+                        'background:' + colors[Math.floor(Math.random() * count)] + ';' +
+                        'animation:fall 3s linear forwards;';
+                    document.body.appendChild(el);
+                    setTimeout(() => el.remove(), 3000);
                 }, i * 100);
             }
         }
 
-        // Add CSS animation for confetti
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes fall {
-                to {
-                    transform: translateY(100vh) rotate(360deg);
-                }
-            }
-        `;
-        document.head.appendChild(style);
-
-        // Initialize on page load
-        document.addEventListener('DOMContentLoaded', function() {
-            loadProgress();
-        });
+        document.addEventListener('DOMContentLoaded', loadProgress);
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9706959222725dff',t:'MTc1NTQwNjU3OS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</body>
 </html>
